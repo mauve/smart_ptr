@@ -43,7 +43,11 @@ struct critical_section
 #endif
 };
 
+#ifndef BOOST_WINAPI_FAMILY 
 extern "C" __declspec(dllimport) void __stdcall InitializeCriticalSection(critical_section *);
+#else
+extern "C" __declspec(dllimport) void __stdcall InitializeCriticalSectionEx(critical_section *, unsigned long, unsigned long);
+#endif
 extern "C" __declspec(dllimport) void __stdcall EnterCriticalSection(critical_section *);
 extern "C" __declspec(dllimport) void __stdcall LeaveCriticalSection(critical_section *);
 extern "C" __declspec(dllimport) void __stdcall DeleteCriticalSection(critical_section *);
@@ -67,7 +71,11 @@ public:
 
     lightweight_mutex()
     {
+#ifndef BOOST_WINAPI_FAMILY 
         InitializeCriticalSection(&cs_);
+#else
+        InitializeCriticalSectionEx(&cs_, 4000, 0);
+#endif
     }
 
     ~lightweight_mutex()
